@@ -3,7 +3,7 @@ import helmet from "helmet";
 import bodyParser from "body-parser";
 import userRoutes from "./routes/user-routes";
 import authRoutes from "./routes/auth";
-
+import {checkAuth} from "./middlewares/auth_checkers";
 
 
 const cors = require("cors");
@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-app.use('/user', userRoutes);
+app.use('/user',checkAuth ,userRoutes);
 app.use('/login', authRoutes)
 
 export default app;

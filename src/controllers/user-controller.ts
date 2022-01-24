@@ -1,5 +1,6 @@
 import {PrismaClient} from '@prisma/client';
 import {Request, Response} from 'express';
+
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
@@ -8,7 +9,7 @@ const prisma = new PrismaClient();
 
 export async function login(req: Request, res: Response){
     const userEmail = req.body.email;
-    prisma.users.findFirst({
+    prisma.user.findFirst({
         where:
             {email: userEmail}
     }).then(user => {
@@ -46,7 +47,7 @@ export async function login(req: Request, res: Response){
 
 export async function getUsers(req: any, res: any) {
     // const users = await prisma.users.findMany({})
-    await prisma.users.findMany().then(result => {
+    await prisma.user.findMany().then(result => {
         if (result === null) {
             return res.status(201).json({
                 message: 'aucun résulatat'
@@ -62,10 +63,10 @@ export async function getUsers(req: any, res: any) {
 }
 
 export async function getUser(req: any, res: any) {
-    // const users = await prisma.users.findMany({})
+    // const users = await prisma.user.findMany({})
     const id: number = Number(req.params.id);
-    await prisma.users.findUnique({
-        where: {id_users: id}
+    await prisma.user.findUnique({
+        where: {id_user: id}
     }).then(result => {
         if (result === null) {
             return res.status(201).json({
@@ -82,13 +83,13 @@ export async function getUser(req: any, res: any) {
 }
 
 export async function createUser(req: any, res: any) {
-    const userExist = await prisma.users.findFirst({
+    const userExist = await prisma.user.findFirst({
         where: {
             email: req.body.email
         }
     })
     if (!userExist) {
-        await prisma.users.create({
+        await prisma.user.create({
             data: {
                 lastname: req.body.lastname,
                 firstname: req.body.firstname,
@@ -115,7 +116,7 @@ export default async function updateUser(req: any, res: any){
         oldpassword: req.body.oldpassword,
         password: req.body.password
     }
-    const getTheUser = await prisma.users.findFirst({
+    const getTheUser = await prisma.user.findFirst({
         where: {
             email: userToUpdate.email
         }
