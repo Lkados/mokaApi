@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUser = exports.getUser = exports.getUsers = exports.login = void 0;
+exports.updateUser = exports.createUser = exports.getUser = exports.getUsers = exports.login = void 0;
 var client_1 = require("@prisma/client");
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
@@ -45,43 +45,49 @@ function login(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var userEmail;
         return __generator(this, function (_a) {
-            userEmail = req.body.email;
-            prisma.users.findFirst({
-                where: { email: userEmail }
-            }).then(function (user) {
-                if (user === null) {
-                    return res.status(201).json({
-                        message: 'veuillez vérifié vos identifient'
-                    });
-                }
-                else {
-                    bcrypt.compare(req.body.password, user.password, function (err, result) {
-                        if (result) {
-                            var token = jwt.sign({
-                                email: user.email,
-                                usersId: user.id_users,
-                                userRole: user.id_role
-                            }, process.env.JWT_KEY, function (err, token) {
-                                res.status(200).json({
-                                    message: "Connexion réussi!",
-                                    token: token
+            switch (_a.label) {
+                case 0:
+                    userEmail = req.body.email;
+                    return [4 /*yield*/, prisma.users.findFirst({
+                            where: { email: userEmail }
+                        }).then(function (user) {
+                            if (user === null) {
+                                return res.status(201).json({
+                                    message: 'veuillez vérifié vos identifient'
                                 });
+                            }
+                            else {
+                                bcrypt.compare(req.body.password, user.password, function (err, result) {
+                                    if (result) {
+                                        var token = jwt.sign({
+                                            email: user.email,
+                                            id: user.id
+                                        }, process.env.JWT_SECRET, { expiresIn: '1h' });
+                                        res.cookie('token', token, {
+                                            httpOnly: true,
+                                            maxAge: 1000 * 60 * 60 * 24 * 7
+                                        });
+                                        res.status(200).json({
+                                            message: "Connexion réussi!",
+                                        });
+                                    }
+                                    else {
+                                        res.status(401).json({
+                                            message: "Mauvaise combinaison email et mot de passe!",
+                                        });
+                                    }
+                                });
+                            }
+                        }).catch(function (err) {
+                            res.status(500).json({
+                                message: "Erreur serveur!",
+                                error: err
                             });
-                        }
-                        else {
-                            res.status(401).json({
-                                message: "Mauvaise combinaison email et mot de passe!",
-                            });
-                        }
-                    });
-                }
-            }).catch(function (err) {
-                res.status(500).json({
-                    message: "Erreur serveur!",
-                    error: err
-                });
-            });
-            return [2 /*return*/];
+                        })];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
         });
     });
 }
@@ -90,9 +96,7 @@ function getUsers(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: 
-                // const users = await prisma.users.findMany({})
-                return [4 /*yield*/, prisma.users.findMany().then(function (result) {
+                case 0: return [4 /*yield*/, prisma.users.findMany().then(function (result) {
                         if (result === null) {
                             return res.status(201).json({
                                 message: 'aucun résulatat'
@@ -105,7 +109,6 @@ function getUsers(req, res) {
                         });
                     })];
                 case 1:
-                    // const users = await prisma.users.findMany({})
                     _a.sent();
                     return [2 /*return*/];
             }
@@ -115,13 +118,13 @@ function getUsers(req, res) {
 exports.getUsers = getUsers;
 function getUser(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var id;
+        var userId;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    id = Number(req.params.id);
+                    userId = Number(req.params.id);
                     return [4 /*yield*/, prisma.users.findUnique({
-                            where: { id_users: id }
+                            where: { id: userId }
                         }).then(function (result) {
                             if (result === null) {
                                 return res.status(201).json({
@@ -144,7 +147,7 @@ function getUser(req, res) {
 exports.getUser = getUser;
 function createUser(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var userExist;
+        var userExist, userData;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, prisma.users.findFirst({
@@ -154,18 +157,19 @@ function createUser(req, res) {
                     })];
                 case 1:
                     userExist = _a.sent();
+                    userData = {
+                        name: req.body.name,
+                        email: req.body.email,
+                        password: bcrypt.hashSync(req.body.password, 10),
+                        resume: req.body.resume,
+                        skills: req.body.skills
+                    };
                     if (!!userExist) return [3 /*break*/, 3];
                     return [4 /*yield*/, prisma.users.create({
-                            data: {
-                                lastname: req.body.lastname,
-                                firstname: req.body.firstname,
-                                id_role: req.body.role,
-                                email: req.body.email,
-                                password: bcrypt.hashSync(req.body.password, 10)
-                            }
+                            data: userData,
                         }).then(function (result) {
                             return res.status(200).json({
-                                message: 'success'
+                                message: 'Utilisateur crée avec succès',
                             });
                         }).catch(function (err) {
                             return res.status(404).json(err);
@@ -174,7 +178,7 @@ function createUser(req, res) {
                     _a.sent();
                     _a.label = 3;
                 case 3: return [2 /*return*/, res.status(200).json({
-                        Message: 'veuillez vérifier vos informations'
+                        Message: 'veuillez vérifier les champs'
                     })];
             }
         });
@@ -207,4 +211,4 @@ function updateUser(req, res) {
         });
     });
 }
-exports.default = updateUser;
+exports.updateUser = updateUser;

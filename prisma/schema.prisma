@@ -10,13 +10,49 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model user {
+model users {
   id        Int @id @default(autoincrement())
   name      String @db.Text
   email     String @unique
   password  String @db.Char(60)
-  resume   String   @db.VarChar(150)
-  skills    Json
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
+model moka {
+  id        Int @id @default(autoincrement())
+  fullName  String @db.VarChar(150)
+  email     String @unique
+  resume   String   @db.Text
+  second_resume   String   @db.Text
+  calendy_url  String @db.VarChar(255)
+  profile_img  String @db.VarChar(255)
+  social_media Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+model skills {
+  id        Int @id @default(autoincrement())
+  title     String @db.VarChar(150)
+  description   String   @db.Text
+  url       String @db.VarChar(255)
+  color     String @db.VarChar(255)
+  class     String @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+model projects {
+  id        Int @id @default(autoincrement())
+  title     String @db.VarChar(150)
+  img       String @db.VarChar(255)
+  url       String @db.VarChar(255)
+  tags      Json
+  description   String   @db.Text
+  category  String @db.VarChar(255)
+  featured  Boolean
+  resume    String @db.VarChar(255)
+  company   String @db.VarChar(255)
+  company_logo   String @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+model
