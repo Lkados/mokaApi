@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 export async function login(req: Request, res: Response) {
     const userEmail = req.body.email;
-    await prisma.users.findFirst({
+    await prisma.user.findFirst({
         where:
             {email: userEmail}
     }).then(user => {
@@ -45,10 +45,10 @@ export async function login(req: Request, res: Response) {
 }
 
 export async function getUsers(req: Request, res: Response) {
-    await prisma.users.findMany().then(result => {
+    await prisma.user.findMany().then(result => {
         if (result === null) {
             return res.status(201).json({
-                message: 'aucun résulatat'
+                message: 'aucun résultat'
             })
         }
         return res.status(200).json(result)
@@ -63,12 +63,12 @@ export async function getUsers(req: Request, res: Response) {
 export async function getUser(req: Request, res: Response) {
     // const users = await prisma.users.findMany({})
     const userId: number = Number(req.params.id);
-    await prisma.users.findUnique({
+    await prisma.user.findUnique({
         where: {id: userId}
     }).then(result => {
         if (result === null) {
             return res.status(201).json({
-                message: 'aucun résulatat'
+                message: 'aucun résultat'
             })
         }
         return res.status(200).json(result)
@@ -81,7 +81,7 @@ export async function getUser(req: Request, res: Response) {
 }
 
 export async function createUser(req: Request, res: Response) {
-    const userExist = await prisma.users.findFirst({
+    const userExist = await prisma.user.findFirst({
         where: {
             email: req.body.email
         }
@@ -90,11 +90,10 @@ export async function createUser(req: Request, res: Response) {
         name: req.body.name,
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, 10),
-        resume: req.body.resume,
-        skills: req.body.skills
+        social_media : req.body.social_media
     };
     if (!userExist) {
-        await prisma.users.create({
+        await prisma.user.create({
             data: userData,
         }).then(result => {
             return res.status(200).json({
@@ -115,7 +114,7 @@ export async function updateUser(req: Request, res: Response) {
         oldpassword: req.body.oldpassword,
         password: req.body.password
     }
-    const getTheUser = await prisma.users.findFirst({
+    const getTheUser = await prisma.user.findFirst({
         where: {
             email: userToUpdate.email
         }

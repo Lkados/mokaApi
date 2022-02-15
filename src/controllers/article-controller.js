@@ -36,67 +36,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.createUser = exports.getUser = exports.getUsers = exports.login = void 0;
+exports.deleteArticle = exports.createArticle = exports.getArticle = exports.getArticles = void 0;
 var client_1 = require("@prisma/client");
-var jwt = require('jsonwebtoken');
-var bcrypt = require('bcrypt');
 var prisma = new client_1.PrismaClient();
-function login(req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        var userEmail;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    userEmail = req.body.email;
-                    return [4 /*yield*/, prisma.user.findFirst({
-                            where: { email: userEmail }
-                        }).then(function (user) {
-                            if (user === null) {
-                                return res.status(201).json({
-                                    message: 'veuillez vérifié vos identifient'
-                                });
-                            }
-                            else {
-                                bcrypt.compare(req.body.password, user.password, function (err, result) {
-                                    if (result) {
-                                        var token = jwt.sign({
-                                            email: user.email,
-                                            id: user.id
-                                        }, process.env.JWT_SECRET, { expiresIn: '1h' });
-                                        res.cookie('token', token, {
-                                            httpOnly: true,
-                                            maxAge: 1000 * 60 * 60 * 24 * 7
-                                        });
-                                        res.status(200).json({
-                                            message: "Connexion réussi!",
-                                        });
-                                    }
-                                    else {
-                                        res.status(401).json({
-                                            message: "Mauvaise combinaison email et mot de passe!",
-                                        });
-                                    }
-                                });
-                            }
-                        }).catch(function (err) {
-                            res.status(500).json({
-                                message: "Erreur serveur!",
-                                error: err
-                            });
-                        })];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    });
-}
-exports.login = login;
-function getUsers(req, res) {
+function getArticles(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma.user.findMany().then(function (result) {
+                case 0: return [4 /*yield*/, prisma.article.findMany().then(function (result) {
                         if (result === null) {
                             return res.status(201).json({
                                 message: 'aucun résultat'
@@ -115,16 +62,16 @@ function getUsers(req, res) {
         });
     });
 }
-exports.getUsers = getUsers;
-function getUser(req, res) {
+exports.getArticles = getArticles;
+function getArticle(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var userId;
+        var articleId;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    userId = Number(req.params.id);
-                    return [4 /*yield*/, prisma.user.findUnique({
-                            where: { id: userId }
+                    articleId = Number(req.params.id);
+                    return [4 /*yield*/, prisma.article.findUnique({
+                            where: { id: articleId }
                         }).then(function (result) {
                             if (result === null) {
                                 return res.status(201).json({
@@ -144,31 +91,36 @@ function getUser(req, res) {
         });
     });
 }
-exports.getUser = getUser;
-function createUser(req, res) {
+exports.getArticle = getArticle;
+function createArticle(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var userExist, userData;
+        var articleExist, articleData;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma.user.findFirst({
+                case 0: return [4 /*yield*/, prisma.article.findFirst({
                         where: {
-                            email: req.body.email
+                            title: req.body.title
                         }
                     })];
                 case 1:
-                    userExist = _a.sent();
-                    userData = {
-                        name: req.body.name,
-                        email: req.body.email,
-                        password: bcrypt.hashSync(req.body.password, 10),
-                        social_media: req.body.social_media
+                    articleExist = _a.sent();
+                    articleData = {
+                        title: req.body.title,
+                        subHead: req.body.subHead,
+                        contents: req.body.contents,
+                        text: req.body.text,
+                        image: req.body.image,
+                        background: req.body.background,
+                        comments: req.body.comments,
+                        map: req.body.map,
+                        authorId: req.body.authorId
                     };
-                    if (!!userExist) return [3 /*break*/, 3];
-                    return [4 /*yield*/, prisma.user.create({
-                            data: userData,
+                    if (!!articleExist) return [3 /*break*/, 3];
+                    return [4 /*yield*/, prisma.article.create({
+                            data: articleData,
                         }).then(function (result) {
                             return res.status(200).json({
-                                message: 'Utilisateur crée avec succès',
+                                message: 'Article crée avec succès'
                             });
                         }).catch(function (err) {
                             return res.status(404).json(err);
@@ -183,31 +135,41 @@ function createUser(req, res) {
         });
     });
 }
-exports.createUser = createUser;
-function updateUser(req, res) {
+exports.createArticle = createArticle;
+function deleteArticle(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var userToUpdate, getTheUser, isOldPassValid;
+        var articleId, articleExist;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    userToUpdate = {
-                        email: req.body.email,
-                        oldpassword: req.body.oldpassword,
-                        password: req.body.password
-                    };
-                    return [4 /*yield*/, prisma.user.findFirst({
+                    articleId = Number(req.params.id);
+                    return [4 /*yield*/, prisma.article.findFirst({
                             where: {
-                                email: userToUpdate.email
+                                id: articleId
                             }
-                        }).then(function (result) {
-                            return result;
                         })];
                 case 1:
-                    getTheUser = _a.sent();
-                    isOldPassValid = bcrypt.compose(userToUpdate.oldpassword);
-                    return [2 /*return*/];
+                    articleExist = _a.sent();
+                    if (!articleExist) return [3 /*break*/, 3];
+                    return [4 /*yield*/, prisma.article.delete({
+                            where: {
+                                id: articleId
+                            }
+                        }).then(function (result) {
+                            return res.status(200).json({
+                                message: 'Article supprimé'
+                            });
+                        }).catch(function (err) {
+                            return res.status(404).json(err);
+                        })];
+                case 2:
+                    _a.sent();
+                    _a.label = 3;
+                case 3: return [2 /*return*/, res.status(200).json({
+                        Message: "l'article n'existe pas"
+                    })];
             }
         });
     });
 }
-exports.updateUser = updateUser;
+exports.deleteArticle = deleteArticle;

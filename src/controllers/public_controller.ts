@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 
 export async function getAbout(req: Request, res: Response) {
-  await prisma.moka.findFirst({
+  await prisma.user.findFirst({
     where: {
       id: 1,
     },
@@ -18,7 +18,7 @@ export async function getAbout(req: Request, res: Response) {
     });
   });
 }
-
+/*
 export async function getSkills(req:Request, res:Response) {
   await prisma.skills.findFirst({
     where: {
@@ -49,4 +49,4 @@ export async function getProjects(req:Request, res:Response) {
       error: err,
     });
   });
-}
+}*/

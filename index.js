@@ -36,63 +36,62 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAbout = void 0;
 var client_1 = require("@prisma/client");
+var bcrypt = require('bcrypt');
 var prisma = new client_1.PrismaClient();
-function getAbout(req, res) {
+function main() {
     return __awaiter(this, void 0, void 0, function () {
+        var allUsers;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma.user.findFirst({
-                        where: {
-                            id: 1,
+                case 0: return [4 /*yield*/, prisma.user.create({
+                        data: {
+                            name: 'Alice',
+                            email: 'alice@prisma.io',
+                            password: bcrypt.hashSync('motdepasse', 10),
+                            articles: {
+                                create: { title: 'Hello World',
+                                    subHead: 'welcome',
+                                    contents: 'beautyfull day',
+                                    text: 'today',
+                                    image: 'i',
+                                    background: 'b',
+                                    comments: 'fingers crossed',
+                                    map: 'm' },
+                            },
+                            roles: {
+                                create: { admin: true },
+                            },
+                            social_media: ''
                         },
-                    }).then(function (about) {
-                        return res.status(200).json({
-                            about: about,
-                        });
-                    }).catch(function (err) {
-                        return res.status(500).json({
-                            error: err,
-                        });
                     })];
                 case 1:
                     _a.sent();
+                    return [4 /*yield*/, prisma.user.findMany({
+                            include: {
+                                articles: true,
+                                roles: true,
+                            },
+                        })];
+                case 2:
+                    allUsers = _a.sent();
+                    console.dir(allUsers, { depth: null });
                     return [2 /*return*/];
             }
         });
     });
 }
-exports.getAbout = getAbout;
-/*
-export async function getSkills(req:Request, res:Response) {
-  await prisma.skills.findFirst({
-    where: {
-      id: 1,
-    },
-  }).then((skills) => {
-    return res.status(200).json({
-      skills: skills,
+main()
+    .catch(function (e) {
+    throw e;
+})
+    .finally(function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, prisma.$disconnect()];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
     });
-  }).catch((err) => {
-    return res.status(500).json({
-      error: err,
-    });
-  });
-}
-
-export async function getProjects(req:Request, res:Response) {
-  await prisma.projects.findMany({
-    where: {
-      id: 1,
-    },
-  }).then((projects) => {
-    return res.status(200).json({
-      projects: projects,
-    });
-  }).catch((err) => {
-    return res.status(500).json({
-      error: err,
-    });
-  });
-}*/ 
+}); });
