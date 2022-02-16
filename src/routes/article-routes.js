@@ -10,4 +10,5 @@ articleRoutes.get('/', article_controller_1.getArticles);
 articleRoutes.get('/:id', article_controller_1.getArticle);
 articleRoutes.post('/', article_controller_1.createArticle);
 articleRoutes.delete('/:id', article_controller_1.deleteArticle);
+articleRoutes.post('/setCategory', article_controller_1.setCategory);
 exports.default = articleRoutes;

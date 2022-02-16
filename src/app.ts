@@ -5,6 +5,9 @@ import userRoutes from "./routes/user-routes";
 import authRoutes from "./routes/auth_routes";
 import public_routes from "./routes/public_routes";
 import articleRoutes from "./routes/article-routes";
+import roleRoutes from "./routes/role-routes";
+import categoryRoutes from "./routes/category-routes";
+import categoryArticleRoutes from "./routes/categoryArticle-routes";
 
 const cookieparser = require('cookie-parser');
 const cors = require("cors");
@@ -21,6 +24,9 @@ app.use('/user' ,userRoutes);
 app.use('/login', authRoutes);
 app.use('/public', public_routes);
 app.use('/article', articleRoutes);
+app.use('/role', roleRoutes);
+app.use('/category', categoryRoutes);
+app.use('/categoryArticle', categoryArticleRoutes);
 
 
 export default app;

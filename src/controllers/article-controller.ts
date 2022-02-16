@@ -97,3 +97,27 @@ export async function deleteArticle(req: Request, res:Response) {
         Message: "l'article n'existe pas"
     })
 }
+
+export async function setCategory(req: Request, res:Response){
+    
+    let newData: any = {
+        
+        articleId : req.body.articleId,
+        categoryId : req.body.categoryId,
+        assignedBy : req.body.assignedBy
+    };
+    
+    await prisma.categoriesOnArticles.create({
+        
+        data: newData
+
+    }).then(result => {
+        return res.status(200).json({
+            message: 'Category ajoutée'
+        })
+    }).catch(err => {
+        return res.status(404).json(err)
+    })
+    
+    
+}
