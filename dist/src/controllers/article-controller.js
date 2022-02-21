@@ -36,14 +36,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteRole = exports.createRole = exports.getRole = exports.getRoles = void 0;
+exports.deleteArticle = exports.createArticle = exports.getArticle = exports.getArticles = void 0;
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
-function getRoles(req, res) {
+function getArticles(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma.role.findMany().then(function (result) {
+                case 0: return [4 /*yield*/, prisma.article.findMany().then(function (result) {
                         if (result === null) {
                             return res.status(201).json({
                                 message: 'aucun résultat'
@@ -62,16 +62,16 @@ function getRoles(req, res) {
         });
     });
 }
-exports.getRoles = getRoles;
-function getRole(req, res) {
+exports.getArticles = getArticles;
+function getArticle(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var roleId;
+        var articleId;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    roleId = Number(req.params.id);
-                    return [4 /*yield*/, prisma.role.findUnique({
-                            where: { id: roleId }
+                    articleId = Number(req.params.id);
+                    return [4 /*yield*/, prisma.article.findUnique({
+                            where: { id: articleId }
                         }).then(function (result) {
                             if (result === null) {
                                 return res.status(201).json({
@@ -91,70 +91,112 @@ function getRole(req, res) {
         });
     });
 }
-exports.getRole = getRole;
-function createRole(req, res) {
+exports.getArticle = getArticle;
+function createArticle(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var roleData;
+        var articleExist, articleData;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    roleData = {
-                        admin: req.body.admin,
-                        userId: req.body.userId
+                case 0: return [4 /*yield*/, prisma.article.findFirst({
+                        where: {
+                            title: req.body.title
+                        }
+                    })];
+                case 1:
+                    articleExist = _a.sent();
+                    articleData = {
+                        title: req.body.title,
+                        subHead: req.body.subHead,
+                        contents: req.body.contents,
+                        text: req.body.text,
+                        image: req.body.image,
+                        background: req.body.background,
+                        comments: req.body.comments,
+                        map: req.body.map,
+                        category_id: req.body.category_id,
+                        authorId: req.body.authorId
                     };
-                    return [4 /*yield*/, prisma.role.create({
-                            data: roleData,
+                    if (!!articleExist) return [3 /*break*/, 3];
+                    return [4 /*yield*/, prisma.article.create({
+                            data: articleData,
                         }).then(function (result) {
                             return res.status(200).json({
-                                message: 'Ajout de role effectué'
-                            });
-                        }).catch(function (err) {
-                            return res.status(404).json(err);
-                        })];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/, res.status(200).json({
-                            Message: 'veuillez vérifier les champs'
-                        })];
-            }
-        });
-    });
-}
-exports.createRole = createRole;
-function deleteRole(req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        var roleId, roleExist;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    roleId = Number(req.params.id);
-                    return [4 /*yield*/, prisma.role.findFirst({
-                            where: {
-                                id: roleId
-                            }
-                        })];
-                case 1:
-                    roleExist = _a.sent();
-                    if (!roleExist) return [3 /*break*/, 3];
-                    return [4 /*yield*/, prisma.role.delete({
-                            where: {
-                                id: roleId
-                            }
-                        }).then(function (result) {
-                            return res.status(200).json({
-                                message: 'role supprimé'
+                                message: 'Article crée avec succès'
                             });
                         }).catch(function (err) {
                             return res.status(404).json(err);
                         })];
                 case 2:
                     _a.sent();
-                    _a.label = 3;
+                    return [3 /*break*/, 4];
                 case 3: return [2 /*return*/, res.status(200).json({
-                        Message: "le role n'existe pas"
+                        Message: 'veuillez vérifier les champs'
                     })];
+                case 4: return [2 /*return*/];
             }
         });
     });
 }
-exports.deleteRole = deleteRole;
+exports.createArticle = createArticle;
+function deleteArticle(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var articleId, articleExist;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    articleId = Number(req.params.id);
+                    return [4 /*yield*/, prisma.article.findFirst({
+                            where: {
+                                id: articleId
+                            }
+                        })];
+                case 1:
+                    articleExist = _a.sent();
+                    if (!articleExist) return [3 /*break*/, 3];
+                    return [4 /*yield*/, prisma.article.delete({
+                            where: {
+                                id: articleId
+                            }
+                        }).then(function (result) {
+                            return res.status(200).json({
+                                message: 'Article supprimé'
+                            });
+                        }).catch(function (err) {
+                            return res.status(404).json(err);
+                        })];
+                case 2:
+                    _a.sent();
+                    return [3 /*break*/, 4];
+                case 3: return [2 /*return*/, res.status(200).json({
+                        Message: "l'article n'existe pas"
+                    })];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.deleteArticle = deleteArticle;
+/*
+export async function setCategory(req: Request, res:Response){
+    
+    let newData: any = {
+        
+        articleId : req.body.articleId,
+        categoryId : req.body.categoryId,
+        assignedBy : req.body.assignedBy
+    };
+    
+    await prisma.categoriesOnArticles.create({
+        
+        data: newData
+
+    }).then(result => {
+        return res.status(200).json({
+            message: 'Category ajoutée'
+        })
+    }).catch(err => {
+        return res.status(404).json(err)
+    })
+    
+    
+}*/ 

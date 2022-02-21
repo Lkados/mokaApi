@@ -36,53 +36,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getArticlesOfCategories = exports.getArticlesOfCategory = void 0;
+exports.getAbout = void 0;
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
-function getArticlesOfCategory(req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        var categoryId;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    categoryId = Number(req.params.id);
-                    return [4 /*yield*/, prisma.categoriesOnArticles.findMany({
-                            where: { categoryId: categoryId }
-                        }).then(function (result) {
-                            if (result === null) {
-                                return res.status(201).json({
-                                    message: 'aucun résultat'
-                                });
-                            }
-                            return res.status(200).json(result);
-                        }).catch(function (err) {
-                            return res.status(404).json({
-                                message: 'oups une erreur est survenue'
-                            });
-                        })];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-            }
-        });
-    });
-}
-exports.getArticlesOfCategory = getArticlesOfCategory;
-function getArticlesOfCategories(req, res) {
+function getAbout(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma.categoriesOnArticles.findMany()
-                        .then(function (result) {
-                        if (result === null) {
-                            return res.status(201).json({
-                                message: 'aucun résultat'
-                            });
-                        }
-                        return res.status(200).json(result);
+                case 0: return [4 /*yield*/, prisma.user.findFirst({
+                        where: {
+                            id: 1,
+                        },
+                    }).then(function (about) {
+                        return res.status(200).json({
+                            about: about,
+                        });
                     }).catch(function (err) {
-                        return res.status(404).json({
-                            message: 'une erreur est survenu'
+                        return res.status(500).json({
+                            error: err,
                         });
                     })];
                 case 1:
@@ -92,4 +63,4 @@ function getArticlesOfCategories(req, res) {
         });
     });
 }
-exports.getArticlesOfCategories = getArticlesOfCategories;
+exports.getAbout = getAbout;

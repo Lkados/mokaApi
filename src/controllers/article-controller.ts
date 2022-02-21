@@ -55,6 +55,7 @@ export async function createArticle(req: Request, res: Response) {
         background:req.body.background,
         comments : req.body.comments,
         map : req.body.map,
+        category_id : req.body.category_id,
         authorId : req.body.authorId
     };
     if (!articleExist) {
@@ -67,10 +68,11 @@ export async function createArticle(req: Request, res: Response) {
         }).catch(err => {
             return res.status(404).json(err)
         })
+    }else{
+        return res.status(200).json({
+            Message: 'veuillez vérifier les champs'
+        })
     }
-    return res.status(200).json({
-        Message: 'veuillez vérifier les champs'
-    })
 }
 
 export async function deleteArticle(req: Request, res:Response) {
@@ -92,12 +94,13 @@ export async function deleteArticle(req: Request, res:Response) {
         }).catch(err => {
             return res.status(404).json(err)
         })
+    }else{
+        return res.status(200).json({
+            Message: "l'article n'existe pas"
+        })
     }
-    return res.status(200).json({
-        Message: "l'article n'existe pas"
-    })
 }
-
+/*
 export async function setCategory(req: Request, res:Response){
     
     let newData: any = {
@@ -120,4 +123,4 @@ export async function setCategory(req: Request, res:Response){
     })
     
     
-}
+}*/

@@ -1,3 +1,4 @@
+"use strict";
 /*
 import { PrismaClient } from '@prisma/client'
 
@@ -11,13 +12,13 @@ async function main() {
         email: 'alice@prisma.io',
         password: bcrypt.hashSync('motdepasse', 10),
         articles: {
-          create: { title: 'Hello World', 
-                    subHead: 'welcome', 
+          create: { title: 'Hello World',
+                    subHead: 'welcome',
                     contents: 'beautyfull day',
-                    text: 'today', 
+                    text: 'today',
                     image:'i',
-                    background: 'b', 
-                    comments: 'fingers crossed', 
+                    background: 'b',
+                    comments: 'fingers crossed',
                     map: 'm' },
         },social_media: ''
       },
@@ -38,4 +39,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
-  */
+  */ 

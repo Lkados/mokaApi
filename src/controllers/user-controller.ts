@@ -16,12 +16,14 @@ export async function login(req: Request, res: Response) {
                 message: 'veuillez vérifié vos identifient'
             })
         } else {
+            
             bcrypt.compare(req.body.password, user.password, function (err: any, result: any) {
                 if (result) {
                     const token = jwt.sign({
                         email: user.email,
                         id: user.id
-                    }, process.env.JWT_SECRET, {expiresIn: '1h'});
+                    }, process.env.JWT_SECRET, 
+                    {expiresIn: '1h'});
                     res.cookie('token', token, {
                         httpOnly: true,
                         maxAge: 1000 * 60 * 60 * 24 * 7
@@ -45,6 +47,7 @@ export async function login(req: Request, res: Response) {
 }
 
 export async function getUsers(req: Request, res: Response) {
+    
     await prisma.user.findMany().then(result => {
         if (result === null) {
             return res.status(201).json({
@@ -61,7 +64,7 @@ export async function getUsers(req: Request, res: Response) {
 }
 
 export async function getUser(req: Request, res: Response) {
-    // const users = await prisma.users.findMany({})
+    
     const userId: number = Number(req.params.id);
     await prisma.user.findUnique({
         where: {id: userId}
@@ -81,31 +84,37 @@ export async function getUser(req: Request, res: Response) {
 }
 
 export async function createUser(req: Request, res: Response) {
+    
     const userExist = await prisma.user.findFirst({
         where: {
             email: req.body.email
         }
     })
+    
     let userData: any = {
-        name: req.body.name,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, 10),
+        roleId: req.body.roleId,
         social_media : req.body.social_media
     };
+    
     if (!userExist) {
         await prisma.user.create({
             data: userData,
         }).then(result => {
             return res.status(200).json({
-                message: 'Utilisateur crée avec succès',
+                Message: 'Utilisateur crée avec succès',
             })
         }).catch(err => {
             return res.status(404).json(err)
         })
+    }else {
+        return res.status(200).json({
+            Message: "un utilisateur est déjà enregistré avec cet email"
+        })
     }
-    return res.status(200).json({
-        Message: 'veuillez vérifier les champs'
-    })
 }
 
 export async function updateUser(req: Request, res: Response) {
@@ -125,3 +134,28 @@ export async function updateUser(req: Request, res: Response) {
 
 }
 
+export async function deleteUser(req: Request, res:Response) {
+    const userId: number = Number(req.params.id);
+    const userExist = await prisma.user.findFirst({
+        where: {
+            id: userId
+        }
+    })
+    if (userExist){
+        await prisma.user.delete({
+            where: {
+                id: userId
+            }
+        }).then(result => {
+            return res.status(200).json({
+                message: 'User deleted'
+            })
+        }).catch(err => {
+            return res.status(404).json(err)
+        })
+    }else{
+        return res.status(200).json({
+            Message: "l'article n'existe pas"
+        })
+    }
+}

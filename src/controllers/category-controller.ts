@@ -56,9 +56,6 @@ export async function createCategory(req: Request, res: Response) {
         return res.status(404).json(err)
     })
     
-    return res.status(200).json({
-        Message: 'veuillez vérifier les champs'
-    })
 }
 
 export async function deleteCategory(req: Request, res:Response) {
@@ -80,9 +77,10 @@ export async function deleteCategory(req: Request, res:Response) {
         }).catch(err => {
             return res.status(404).json(err)
         })
+    }else{
+        return res.status(200).json({
+            Message: "l'article n'existe pas"
+        })
     }
-    return res.status(200).json({
-        Message: "l'article n'existe pas"
-    })
 }
 

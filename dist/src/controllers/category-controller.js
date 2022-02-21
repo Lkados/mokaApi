@@ -36,14 +36,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setCategory = exports.deleteArticle = exports.createArticle = exports.getArticle = exports.getArticles = void 0;
+exports.deleteCategory = exports.createCategory = exports.getCategory = exports.getCategories = void 0;
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
-function getArticles(req, res) {
+function getCategories(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma.article.findMany().then(function (result) {
+                case 0: return [4 /*yield*/, prisma.category.findMany().then(function (result) {
                         if (result === null) {
                             return res.status(201).json({
                                 message: 'aucun résultat'
@@ -62,16 +62,16 @@ function getArticles(req, res) {
         });
     });
 }
-exports.getArticles = getArticles;
-function getArticle(req, res) {
+exports.getCategories = getCategories;
+function getCategory(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var articleId;
+        var categoryId;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    articleId = Number(req.params.id);
-                    return [4 /*yield*/, prisma.article.findUnique({
-                            where: { id: articleId }
+                    categoryId = Number(req.params.id);
+                    return [4 /*yield*/, prisma.category.findUnique({
+                            where: { id: categoryId }
                         }).then(function (result) {
                             if (result === null) {
                                 return res.status(201).json({
@@ -91,104 +91,21 @@ function getArticle(req, res) {
         });
     });
 }
-exports.getArticle = getArticle;
-function createArticle(req, res) {
+exports.getCategory = getCategory;
+function createCategory(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var articleExist, articleData;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma.article.findFirst({
-                        where: {
-                            title: req.body.title
-                        }
-                    })];
-                case 1:
-                    articleExist = _a.sent();
-                    articleData = {
-                        title: req.body.title,
-                        subHead: req.body.subHead,
-                        contents: req.body.contents,
-                        text: req.body.text,
-                        image: req.body.image,
-                        background: req.body.background,
-                        comments: req.body.comments,
-                        map: req.body.map,
-                        authorId: req.body.authorId
-                    };
-                    if (!!articleExist) return [3 /*break*/, 3];
-                    return [4 /*yield*/, prisma.article.create({
-                            data: articleData,
-                        }).then(function (result) {
-                            return res.status(200).json({
-                                message: 'Article crée avec succès'
-                            });
-                        }).catch(function (err) {
-                            return res.status(404).json(err);
-                        })];
-                case 2:
-                    _a.sent();
-                    _a.label = 3;
-                case 3: return [2 /*return*/, res.status(200).json({
-                        Message: 'veuillez vérifier les champs'
-                    })];
-            }
-        });
-    });
-}
-exports.createArticle = createArticle;
-function deleteArticle(req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        var articleId, articleExist;
+        var categoryData;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    articleId = Number(req.params.id);
-                    return [4 /*yield*/, prisma.article.findFirst({
-                            where: {
-                                id: articleId
-                            }
-                        })];
-                case 1:
-                    articleExist = _a.sent();
-                    if (!articleExist) return [3 /*break*/, 3];
-                    return [4 /*yield*/, prisma.article.delete({
-                            where: {
-                                id: articleId
-                            }
-                        }).then(function (result) {
-                            return res.status(200).json({
-                                message: 'Article supprimé'
-                            });
-                        }).catch(function (err) {
-                            return res.status(404).json(err);
-                        })];
-                case 2:
-                    _a.sent();
-                    _a.label = 3;
-                case 3: return [2 /*return*/, res.status(200).json({
-                        Message: "l'article n'existe pas"
-                    })];
-            }
-        });
-    });
-}
-exports.deleteArticle = deleteArticle;
-function setCategory(req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        var newData;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    newData = {
-                        articleId: req.body.articleId,
-                        categoryId: req.body.categoryId,
-                        assignedBy: req.body.assignedBy
+                    categoryData = {
+                        name: req.body.name
                     };
-                    return [4 /*yield*/, prisma.categoriesOnArticles.create({
-                            data: newData
+                    return [4 /*yield*/, prisma.category.create({
+                            data: categoryData,
                         }).then(function (result) {
                             return res.status(200).json({
-                                message: 'Category ajoutée'
+                                message: 'Ajout de category effectué'
                             });
                         }).catch(function (err) {
                             return res.status(404).json(err);
@@ -200,4 +117,42 @@ function setCategory(req, res) {
         });
     });
 }
-exports.setCategory = setCategory;
+exports.createCategory = createCategory;
+function deleteCategory(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var categoryId, categoryExist;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    categoryId = Number(req.params.id);
+                    return [4 /*yield*/, prisma.category.findFirst({
+                            where: {
+                                id: categoryId
+                            }
+                        })];
+                case 1:
+                    categoryExist = _a.sent();
+                    if (!categoryExist) return [3 /*break*/, 3];
+                    return [4 /*yield*/, prisma.category.delete({
+                            where: {
+                                id: categoryId
+                            }
+                        }).then(function (result) {
+                            return res.status(200).json({
+                                message: 'Catégorie supprimé'
+                            });
+                        }).catch(function (err) {
+                            return res.status(404).json(err);
+                        })];
+                case 2:
+                    _a.sent();
+                    return [3 /*break*/, 4];
+                case 3: return [2 /*return*/, res.status(200).json({
+                        Message: "l'article n'existe pas"
+                    })];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.deleteCategory = deleteCategory;

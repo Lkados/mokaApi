@@ -36,14 +36,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCategory = exports.createCategory = exports.getCategory = exports.getCategories = void 0;
+exports.deleteRole = exports.createRole = exports.getRole = exports.getRoles = void 0;
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
-function getCategories(req, res) {
+function getRoles(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma.category.findMany().then(function (result) {
+                case 0: return [4 /*yield*/, prisma.role.findMany().then(function (result) {
                         if (result === null) {
                             return res.status(201).json({
                                 message: 'aucun résultat'
@@ -62,16 +62,16 @@ function getCategories(req, res) {
         });
     });
 }
-exports.getCategories = getCategories;
-function getCategory(req, res) {
+exports.getRoles = getRoles;
+function getRole(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var categoryId;
+        var roleId;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    categoryId = Number(req.params.id);
-                    return [4 /*yield*/, prisma.category.findUnique({
-                            where: { id: categoryId }
+                    roleId = Number(req.params.id);
+                    return [4 /*yield*/, prisma.role.findUnique({
+                            where: { id: roleId }
                         }).then(function (result) {
                             if (result === null) {
                                 return res.status(201).json({
@@ -91,69 +91,69 @@ function getCategory(req, res) {
         });
     });
 }
-exports.getCategory = getCategory;
-function createCategory(req, res) {
+exports.getRole = getRole;
+function createRole(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var categoryData;
+        var roleData;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    categoryData = {
-                        name: req.body.name
+                    roleData = {
+                        textRole: req.body.textRole,
+                        userId: req.body.userId
                     };
-                    return [4 /*yield*/, prisma.category.create({
-                            data: categoryData,
+                    return [4 /*yield*/, prisma.role.create({
+                            data: roleData,
                         }).then(function (result) {
                             return res.status(200).json({
-                                message: 'Ajout de category effectué'
+                                message: 'Ajout de role effectué'
                             });
                         }).catch(function (err) {
                             return res.status(404).json(err);
                         })];
                 case 1:
                     _a.sent();
-                    return [2 /*return*/, res.status(200).json({
-                            Message: 'veuillez vérifier les champs'
-                        })];
+                    return [2 /*return*/];
             }
         });
     });
 }
-exports.createCategory = createCategory;
-function deleteCategory(req, res) {
+exports.createRole = createRole;
+function deleteRole(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var categoryId, categoryExist;
+        var roleId, roleExist;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    categoryId = Number(req.params.id);
-                    return [4 /*yield*/, prisma.category.findFirst({
+                    roleId = Number(req.params.id);
+                    return [4 /*yield*/, prisma.role.findFirst({
                             where: {
-                                id: categoryId
+                                id: roleId
                             }
                         })];
                 case 1:
-                    categoryExist = _a.sent();
-                    if (!categoryExist) return [3 /*break*/, 3];
-                    return [4 /*yield*/, prisma.category.delete({
+                    roleExist = _a.sent();
+                    if (!roleExist) return [3 /*break*/, 3];
+                    return [4 /*yield*/, prisma.role.delete({
                             where: {
-                                id: categoryId
+                                id: roleId
                             }
                         }).then(function (result) {
                             return res.status(200).json({
-                                message: 'Catégorie supprimé'
+                                message: 'role supprimé'
                             });
                         }).catch(function (err) {
                             return res.status(404).json(err);
                         })];
                 case 2:
                     _a.sent();
-                    _a.label = 3;
+                    return [3 /*break*/, 4];
                 case 3: return [2 /*return*/, res.status(200).json({
-                        Message: "l'article n'existe pas"
+                        Message: "le role n'existe pas"
                     })];
+                case 4: return [2 /*return*/];
             }
         });
     });
 }
-exports.deleteCategory = deleteCategory;
+exports.deleteRole = deleteRole;

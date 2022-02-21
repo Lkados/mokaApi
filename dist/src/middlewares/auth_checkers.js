@@ -4,7 +4,6 @@ exports.checkAuth = void 0;
 var jwt = require('jsonwebtoken');
 function checkAuth(req, res, next) {
     var token = req.cookies.token;
-    console.log(token);
     if (!token) {
         return res.status(401).json({
             message: 'No token provided'

@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.createUser = exports.getUser = exports.getUsers = exports.login = void 0;
+exports.deleteUser = exports.updateUser = exports.createUser = exports.getUser = exports.getUsers = exports.login = void 0;
 var client_1 = require("@prisma/client");
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
@@ -158,9 +158,11 @@ function createUser(req, res) {
                 case 1:
                     userExist = _a.sent();
                     userData = {
-                        name: req.body.name,
+                        firstName: req.body.firstName,
+                        lastName: req.body.lastName,
                         email: req.body.email,
                         password: bcrypt.hashSync(req.body.password, 10),
+                        roleId: req.body.roleId,
                         social_media: req.body.social_media
                     };
                     if (!!userExist) return [3 /*break*/, 3];
@@ -168,17 +170,18 @@ function createUser(req, res) {
                             data: userData,
                         }).then(function (result) {
                             return res.status(200).json({
-                                message: 'Utilisateur crée avec succès',
+                                Message: 'Utilisateur crée avec succès',
                             });
                         }).catch(function (err) {
                             return res.status(404).json(err);
                         })];
                 case 2:
                     _a.sent();
-                    _a.label = 3;
+                    return [3 /*break*/, 4];
                 case 3: return [2 /*return*/, res.status(200).json({
-                        Message: 'veuillez vérifier les champs'
+                        Message: "un utilisateur est déjà enregistré avec cet email"
                     })];
+                case 4: return [2 /*return*/];
             }
         });
     });
@@ -211,3 +214,41 @@ function updateUser(req, res) {
     });
 }
 exports.updateUser = updateUser;
+function deleteUser(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var userId, userExist;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    userId = Number(req.params.id);
+                    return [4 /*yield*/, prisma.user.findFirst({
+                            where: {
+                                id: userId
+                            }
+                        })];
+                case 1:
+                    userExist = _a.sent();
+                    if (!userExist) return [3 /*break*/, 3];
+                    return [4 /*yield*/, prisma.user.delete({
+                            where: {
+                                id: userId
+                            }
+                        }).then(function (result) {
+                            return res.status(200).json({
+                                message: 'User deleted'
+                            });
+                        }).catch(function (err) {
+                            return res.status(404).json(err);
+                        })];
+                case 2:
+                    _a.sent();
+                    return [3 /*break*/, 4];
+                case 3: return [2 /*return*/, res.status(200).json({
+                        Message: "l'article n'existe pas"
+                    })];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.deleteUser = deleteUser;

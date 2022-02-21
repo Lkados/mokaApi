@@ -43,23 +43,20 @@ export async function getRole(req: Request, res: Response) {
 export async function createRole(req: Request, res: Response) {
     
     let roleData: any = {
-        admin : req.body.admin,
+        textRole : req.body.textRole,
         userId : req.body.userId
     };
     
-        await prisma.role.create({
-            data: roleData,
-        }).then(result => {
-            return res.status(200).json({
-                message: 'Ajout de role effectué'
-            })
-        }).catch(err => {
-            return res.status(404).json(err)
+    await prisma.role.create({
+        data: roleData,
+    }).then(result => {
+        return res.status(200).json({
+            message: 'Ajout de role effectué'
         })
-    
-    return res.status(200).json({
-        Message: 'veuillez vérifier les champs'
+    }).catch(err => {
+        return res.status(404).json(err)
     })
+    
 }
 
 export async function deleteRole(req: Request, res:Response) {
@@ -81,8 +78,9 @@ export async function deleteRole(req: Request, res:Response) {
         }).catch(err => {
             return res.status(404).json(err)
         })
-    }
-    return res.status(200).json({
+    }else{
+        return res.status(200).json({
         Message: "le role n'existe pas"
     })
+}
 }

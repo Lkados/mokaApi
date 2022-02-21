@@ -35,64 +35,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAbout = void 0;
-var client_1 = require("@prisma/client");
-var prisma = new client_1.PrismaClient();
-function getAbout(req, res) {
-    return __awaiter(this, void 0, void 0, function () {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var api_error_1 = __importDefault(require("../error/api-error"));
+function validateDto(schema) {
+    var _this = this;
+    return function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        var validatedBody, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma.user.findFirst({
-                        where: {
-                            id: 1,
-                        },
-                    }).then(function (about) {
-                        return res.status(200).json({
-                            about: about,
-                        });
-                    }).catch(function (err) {
-                        return res.status(500).json({
-                            error: err,
-                        });
-                    })];
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, schema.validate(req.body)];
                 case 1:
-                    _a.sent();
-                    return [2 /*return*/];
+                    validatedBody = _a.sent();
+                    next();
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_1 = _a.sent();
+                    next(api_error_1.default.badRequest(err_1));
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
             }
         });
-    });
+    }); };
 }
-exports.getAbout = getAbout;
-/*
-export async function getSkills(req:Request, res:Response) {
-  await prisma.skills.findFirst({
-    where: {
-      id: 1,
-    },
-  }).then((skills) => {
-    return res.status(200).json({
-      skills: skills,
-    });
-  }).catch((err) => {
-    return res.status(500).json({
-      error: err,
-    });
-  });
-}
-
-export async function getProjects(req:Request, res:Response) {
-  await prisma.projects.findMany({
-    where: {
-      id: 1,
-    },
-  }).then((projects) => {
-    return res.status(200).json({
-      projects: projects,
-    });
-  }).catch((err) => {
-    return res.status(500).json({
-      error: err,
-    });
-  });
-}*/ 
+module.exports = validateDto;
