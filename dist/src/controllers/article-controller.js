@@ -36,23 +36,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteArticle = exports.createArticle = exports.getArticle = exports.getArticles = void 0;
+exports.updateArticle = exports.deleteArticle = exports.createArticle = exports.getArticle = exports.getArticles = void 0;
 var client_1 = require("@prisma/client");
 var prisma = new client_1.PrismaClient();
 function getArticles(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma.article.findMany().then(function (result) {
+                case 0: return [4 /*yield*/, prisma.article
+                        .findMany({
+                        orderBy: {
+                            id: "asc"
+                        }
+                    })
+                        .then(function (result) {
                         if (result === null) {
                             return res.status(201).json({
-                                message: 'aucun résultat'
+                                message: "aucun résultat",
                             });
                         }
                         return res.status(200).json(result);
-                    }).catch(function (err) {
+                    })
+                        .catch(function (err) {
                         return res.status(404).json({
-                            message: 'oups une erreur est survenue'
+                            message: "oups une erreur est survenue",
                         });
                     })];
                 case 1:
@@ -176,6 +183,55 @@ function deleteArticle(req, res) {
     });
 }
 exports.deleteArticle = deleteArticle;
+function updateArticle(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var articleId, articleExist, articleData;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    articleId = Number(req.params.id);
+                    return [4 /*yield*/, prisma.article.findFirst({
+                            where: {
+                                id: articleId,
+                            },
+                        })];
+                case 1:
+                    articleExist = _a.sent();
+                    if (!articleExist) return [3 /*break*/, 3];
+                    articleData = {
+                        title: req.body.title,
+                        subHead: req.body.subHead,
+                        contents: req.body.contents,
+                        text: req.body.text,
+                        image: req.body.image,
+                        background: req.body.background,
+                        comments: req.body.comments,
+                        map: req.body.map,
+                        category_id: req.body.category_id,
+                        authorId: req.body.authorId
+                    };
+                    return [4 /*yield*/, prisma.article
+                            .update({ where: { id: articleId }, data: articleData })
+                            .then(function (result) {
+                            return res.status(200).json({
+                                message: "Article modifié",
+                            });
+                        })
+                            .catch(function (err) {
+                            return res.status(404).json(err);
+                        })];
+                case 2:
+                    _a.sent();
+                    return [3 /*break*/, 4];
+                case 3: return [2 /*return*/, res.status(200).json({
+                        Message: "l'article n'existe pas",
+                    })];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.updateArticle = updateArticle;
 /*
 export async function setCategory(req: Request, res:Response){
     

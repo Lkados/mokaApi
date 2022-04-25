@@ -22,10 +22,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-app.use('/user' ,checkAuth, userRoutes);
+app.use('/user' , userRoutes);
 app.use('/login', authRoutes);
 app.use('/public', public_routes);
-app.use('/article', articleRoutes);
+app.use("/article", articleRoutes);
 app.use('/role', roleRoutes);
 app.use('/category', categoryRoutes);
 // app.use('/categoryArticle', categoryArticleRoutes);

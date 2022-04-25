@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateUser = exports.createUser = exports.getUser = exports.getUsers = exports.login = void 0;
+exports.deleteUser = exports.updateUserPassword = exports.createUser = exports.getUser = exports.getUsers = exports.login = void 0;
 var client_1 = require("@prisma/client");
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
@@ -52,8 +52,8 @@ function login(req, res) {
                             where: { email: userEmail }
                         }).then(function (user) {
                             if (user === null) {
-                                return res.status(201).json({
-                                    message: 'veuillez vérifié vos identifient'
+                                return res.status(401).json({
+                                    message: 'veuillez vérifier vos identifiants'
                                 });
                             }
                             else {
@@ -65,7 +65,7 @@ function login(req, res) {
                                         }, process.env.JWT_SECRET, { expiresIn: '1h' });
                                         res.cookie('token', token, {
                                             httpOnly: true,
-                                            maxAge: 1000 * 60 * 60 * 24 * 7
+                                            maxAge: 1000 * 60 * 60 * 24 * 7,
                                         });
                                         res.status(200).json({
                                             message: "Connexion réussi!",
@@ -187,9 +187,9 @@ function createUser(req, res) {
     });
 }
 exports.createUser = createUser;
-function updateUser(req, res) {
+function updateUserPassword(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var userToUpdate, getTheUser, isOldPassValid;
+        var userToUpdate, getTheUser, match, updateUser;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -202,18 +202,46 @@ function updateUser(req, res) {
                             where: {
                                 email: userToUpdate.email
                             }
-                        }).then(function (result) {
-                            return result;
                         })];
                 case 1:
                     getTheUser = _a.sent();
-                    isOldPassValid = bcrypt.compose(userToUpdate.oldpassword);
-                    return [2 /*return*/];
+                    if (!(getTheUser === null)) return [3 /*break*/, 2];
+                    return [2 /*return*/, res.status(201).json({
+                            message: 'email non reconnu'
+                        })];
+                case 2: return [4 /*yield*/, bcrypt.compare(req.body.oldpassword, getTheUser.password)];
+                case 3:
+                    match = _a.sent();
+                    if (!match) return [3 /*break*/, 5];
+                    return [4 /*yield*/, prisma.user
+                            .update({
+                            where: {
+                                email: userToUpdate.email,
+                            },
+                            data: {
+                                password: bcrypt.hashSync(userToUpdate.password, 10),
+                            },
+                        })
+                            .then(function (result) {
+                            return res.status(200).json({
+                                message: "UserPassword updated",
+                            });
+                        })
+                            .catch(function (err) {
+                            return res.status(404).json(err);
+                        })];
+                case 4:
+                    updateUser = _a.sent();
+                    return [3 /*break*/, 6];
+                case 5: return [2 /*return*/, res.status(201).json({
+                        message: 'ancien MDP non correct'
+                    })];
+                case 6: return [2 /*return*/];
             }
         });
     });
 }
-exports.updateUser = updateUser;
+exports.updateUserPassword = updateUserPassword;
 function deleteUser(req, res) {
     return __awaiter(this, void 0, void 0, function () {
         var userId, userExist;

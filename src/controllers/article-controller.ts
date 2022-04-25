@@ -6,18 +6,25 @@ const prisma = new PrismaClient();
 
 
 export async function getArticles(req: Request, res: Response) {
-    await prisma.article.findMany().then(result => {
-        if (result === null) {
-            return res.status(201).json({
-                message: 'aucun résultat'
-            })
+    await prisma.article
+      .findMany({
+        orderBy: {
+          id: "asc"
         }
-        return res.status(200).json(result)
-    }).catch(err => {
+      })
+      .then((result) => {
+        if (result === null) {
+          return res.status(201).json({
+            message: "aucun résultat",
+          });
+        }
+        return res.status(200).json(result);
+      })
+      .catch((err) => {
         return res.status(404).json({
-            message: 'oups une erreur est survenue'
-        })
-    })
+          message: "oups une erreur est survenue",
+        });
+      });
 }
 
 export async function getArticle(req: Request, res: Response) {
@@ -58,6 +65,7 @@ export async function createArticle(req: Request, res: Response) {
         category_id : req.body.category_id,
         authorId : req.body.authorId
     };
+    
     if (!articleExist) {
         await prisma.article.create({
             data: articleData,
@@ -99,6 +107,43 @@ export async function deleteArticle(req: Request, res:Response) {
             Message: "l'article n'existe pas"
         })
     }
+}
+export async function updateArticle(req: Request, res: Response) {
+  const articleId: number = Number(req.params.id);
+  const articleExist = await prisma.article.findFirst({
+    where: {
+      id: articleId,
+    },
+  });
+  if (articleExist) {
+
+      let articleData: any = {
+        title: req.body.title,
+        subHead: req.body.subHead,
+        contents: req.body.contents,
+        text : req.body.text,
+        image : req.body.image,
+        background:req.body.background,
+        comments : req.body.comments,
+        map : req.body.map,
+        category_id : req.body.category_id,
+        authorId : req.body.authorId
+    };
+    await prisma.article
+      .update({ where: { id: articleId }, data: articleData })
+      .then((result: any) => {
+        return res.status(200).json({
+          message: "Article modifié",
+        });
+      })
+      .catch((err: any) => {
+        return res.status(404).json(err);
+      });
+  } else {
+    return res.status(200).json({
+      Message: "l'article n'existe pas",
+    });
+  }
 }
 /*
 export async function setCategory(req: Request, res:Response){
